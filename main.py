@@ -128,7 +128,98 @@ def draw_board():
                 )
 
 
+def draw_promotion():
 
+    # dark transparent background
+    overlay = pygame.Surface((WIDTH, HEIGHT))
+    overlay.set_alpha(130)
+    overlay.fill((0,0,0))
+    screen.blit(overlay,(0,0))
+
+
+    # popup
+    popup = pygame.Rect(
+        170,
+        130,
+        300,
+        400
+    )
+
+    pygame.draw.rect(
+        screen,
+        (245,245,245),
+        popup,
+        border_radius=20
+    )
+
+
+    title_font = pygame.font.SysFont(
+        "arial",
+        32
+    )
+
+    button_font = pygame.font.SysFont(
+        "arial",
+        25
+    )
+
+
+    title = title_font.render(
+        "Promote Pawn",
+        True,
+        (0,0,0)
+    )
+
+
+    screen.blit(
+        title,
+        (
+            220,
+            160
+        )
+    )
+
+
+    options = [
+        ("Queen","queen"),
+        ("Rook","rook"),
+        ("Bishop","bishop"),
+        ("Knight","knight")
+    ]
+
+
+    for i,(label,piece) in enumerate(options):
+
+        button = pygame.Rect(
+            220,
+            220+i*60,
+            200,
+            45
+        )
+
+
+        pygame.draw.rect(
+            screen,
+            (210,210,210),
+            button,
+            border_radius=12
+        )
+
+
+        text = button_font.render(
+            label,
+            True,
+            (0,0,0)
+        )
+
+
+        screen.blit(
+            text,
+            (
+                button.x+55,
+                button.y+10
+            )
+        )
 
 
 selected = None
@@ -139,6 +230,7 @@ winner = ""
 promotion = False
 promotion_piece = None
 promotion_color = None
+promotion_position = None
 running=True
 
 while running:
@@ -150,42 +242,24 @@ while running:
 
         if event.type == pygame.MOUSEBUTTONDOWN and promotion:
 
-            x,y = pygame.mouse.get_pos()
+            x, y = pygame.mouse.get_pos()
 
 
-            choice = (y-220)//55
+            choice = (y - 220) // 55
 
 
-            pieces = [
-                "queen",
-                "rook",
-                "bishop",
-                "knight"
-            ]
+            pieces = ["queen","rook","bishop","knight"]
 
 
             if 0 <= choice < 4:
 
+                r, c = promotion_position
 
-                # find pawn waiting for promotion
-
-                for r in range(8):
-
-                    for c in range(8):
-
-                        piece = board[r][c]
-
-
-                        if (
-                            piece
-                            and piece.name == "pawn"
-                            and piece.color == promotion_color
-                        ):
-
-                            piece.name = pieces[choice]
+                board[r][c].name = pieces[choice]
 
 
                 promotion = False
+                promotion_position = None
         if (event.type == pygame.MOUSEBUTTONDOWN
             and not game_over
             and not promotion):
@@ -287,7 +361,7 @@ while running:
 
                                     promotion_color = "white"
 
-
+                                    promotion_position = (row,col)
 
                                 elif selected_piece.color == "black" and row == 7:
 
@@ -295,9 +369,10 @@ while running:
 
                                     promotion_color = "black"   
 
+                                    promotion_position = (row,col)
 
                             # switch turn ONCE
-
+                        
                             if turn == "white":
 
                                 turn = "black"
@@ -328,45 +403,11 @@ while running:
 
                     selected = None
 
-
-
-    def draw_promotion():
-
-        pygame.draw.rect(
-        screen,
-        (220,220,220),
-        (220,200,200,250)
-    )
-
-
-    options = [
-        "Queen",
-        "Rook",
-        "Bishop",
-        "Knight"
-    ]
-
-
-    for i, option in enumerate(options):
-
-        text = font.render(
-            option,
-            True,
-            (0,0,0)
-        )
-
-        screen.blit(
-            text,
-            (
-                250,
-                220 + i*55
-            )
-        )
     draw_board()
 
     if promotion:
 
-        draw_promotion(promotion_color)
+        draw_promotion()
 
     # show winner screen
     if game_over:
