@@ -1,6 +1,6 @@
 import pygame
 from pieces import Piece
-from rules import valid_move
+from rules import valid_move,can_castle
 from check import (
     is_check,
     copy_board,
@@ -302,11 +302,10 @@ while running:
 
                     # legal movement check
 
-                    if valid_move(
-                        board,
-                        selected,
-                        (row,col)
-                    ):
+                    castle = can_castle(board,selected,(row,col))
+
+
+                    if valid_move(board,selected,(row,col)) or castle:
 
 
                         # temporary board
@@ -344,8 +343,34 @@ while running:
                             # REAL MOVE
 
                             board[row][col] = selected_piece
-
                             board[old_row][old_col] = None
+
+
+
+                            # CASTLING MOVE
+
+                            if castle:
+
+                                # king side
+                                if col > old_col:
+
+                                    rook = board[row][7]
+
+                                    board[row][5] = rook
+                                    board[row][7] = None
+
+                                    rook.moved = True
+
+
+                                # queen side
+                                else:
+
+                                    rook = board[row][0]
+
+                                    board[row][3] = rook
+                                    board[row][0] = None
+
+                                    rook.moved = True
 
 
 

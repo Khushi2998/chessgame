@@ -47,7 +47,187 @@ def path_clear(board, start, end):
 
 
     return True
+def can_castle(board,start,end):
+    from check import is_check 
+    row,col = start
+    new_row,new_col = end
 
+    king = board[row][col]
+
+
+    if not king:
+        return False
+
+
+    if king.name != "king":
+        return False
+
+
+    if king.moved:
+        return False
+
+
+    # must stay same row
+    if row != new_row:
+        return False
+
+
+    # two squares only
+    if abs(new_col-col)!=2:
+        return False
+
+
+
+    # king cannot castle while in check
+    if is_check(board, king.color):
+        return False
+
+
+
+    # kingside
+    if new_col > col:
+
+        rook = board[row][7]
+
+
+        if not rook:
+            return False
+
+
+        if rook.name!="rook":
+            return False
+
+
+        if rook.color != king.color:
+            return False
+
+
+        if rook.moved:
+            return False
+
+
+        # squares between king and rook
+        if board[row][5] or board[row][6]:
+            return False
+
+
+        return True
+
+
+
+    # queenside
+    else:
+
+        rook = board[row][0]
+
+
+        if not rook:
+            return False
+
+
+        if rook.name!="rook":
+            return False
+
+
+        if rook.color != king.color:
+            return False
+
+
+        if rook.moved:
+            return False
+
+
+        if board[row][1] or board[row][2] or board[row][3]:
+            return False
+
+
+        return True
+
+    row,col = start
+    new_row,new_col = end
+
+
+    king = board[row][col]
+
+
+    if not king:
+        return False
+
+
+    if king.name != "king":
+        return False
+
+
+    if king.moved:
+        return False
+
+
+
+    # must move two squares
+
+    if abs(new_col-col)!=2:
+        return False
+
+
+
+    # kingside
+
+    if new_col > col:
+
+        rook = board[row][7]
+
+
+        if not rook:
+            return False
+
+
+        if rook.name!="rook":
+            return False
+
+
+        if rook.moved:
+            return False
+
+
+
+        # space between
+
+        if board[row][5] or board[row][6]:
+            return False
+
+
+
+        return True
+
+
+
+    # queenside
+
+    else:
+
+        rook = board[row][0]
+
+
+        if not rook:
+            return False
+
+
+        if rook.name!="rook":
+            return False
+
+
+        if rook.moved:
+            return False
+
+
+
+        if board[row][1] or board[row][2] or board[row][3]:
+            return False
+
+
+
+        return True
+    
 def valid_move(board, start, end):
 
     old_row, old_col = start
