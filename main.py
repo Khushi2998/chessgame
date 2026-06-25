@@ -4,7 +4,9 @@ from rules import valid_move,can_castle
 from check import (
     is_check,
     copy_board,
-    is_checkmate
+    is_checkmate,
+    has_any_legal_move,
+    insufficient_material
 )
 
 pygame.init()
@@ -30,6 +32,10 @@ font = pygame.font.SysFont(
     55
 )
 
+result_font = pygame.font.SysFont(
+    "arial",
+    35
+)
 
 # create pieces
 
@@ -227,6 +233,8 @@ selected = None
 turn = "white"
 game_over = False
 winner = ""
+draw = False
+draw_reason = ""
 promotion = False
 promotion_piece = None
 promotion_color = None
@@ -417,7 +425,17 @@ while running:
                                 else:
 
                                     winner = "White Wins!"
+                            elif not has_any_legal_move(board,turn):
 
+                                draw = True
+                                draw_reason = "DRAW - STALEMATE"
+                    
+
+
+                            elif insufficient_material(board):
+
+                                draw = True
+                                draw_reason = "DRAW - INSUFFICIENT MATERIAL"
                             elif is_check(board, turn):
 
                                 print(
@@ -451,6 +469,24 @@ while running:
             )
         )
 
+    if draw:
+
+        text = result_font.render(
+        draw_reason,
+        True,
+        (255,0,0)
+    )
+
+        text_rect = text.get_rect(
+        center=(WIDTH//2, HEIGHT//2))
+
+        screen.blit(
+        text,
+        (
+            150,
+            300
+        )
+    )
 
     pygame.display.update()
 

@@ -278,3 +278,78 @@ def is_checkmate(board,color):
 
 
     return False
+
+def has_any_legal_move(board, color):
+
+    for row in range(8):
+        for col in range(8):
+
+            piece = board[row][col]
+
+            if piece and piece.color == color:
+
+                for new_row in range(8):
+                    for new_col in range(8):
+
+                        if valid_move(
+                            board,
+                            (row,col),
+                            (new_row,new_col)
+                        ):
+
+                            temp = copy_board(board)
+
+
+                            temp[new_row][new_col] = temp[row][col]
+
+                            temp[row][col] = None
+
+
+                            if not is_check(
+                                temp,
+                                color
+                            ):
+
+                                return True
+
+
+    return False
+
+
+
+def insufficient_material(board):
+
+    pieces=[]
+
+
+    for row in board:
+
+        for piece in row:
+
+            if piece:
+
+                pieces.append(piece.name)
+
+
+
+    # only two kings
+
+    if pieces.count("king")==2 and len(pieces)==2:
+
+        return True
+
+
+
+    # king + bishop / knight vs king
+
+    if len(pieces)==3:
+
+        if "bishop" in pieces:
+            return True
+
+        if "knight" in pieces:
+            return True
+
+
+
+    return False
